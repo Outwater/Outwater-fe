@@ -1,4 +1,5 @@
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { createContext, useState, ReactNode, useMemo } from 'react';
+import { request } from '../api/request';
 import { User } from '../types/user';
 
 type UserState = {
@@ -19,7 +20,22 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
     accessToken: '',
   });
 
-  const login = () => {};
+  const login = async (id: string, password: string) => {
+    try {
+      const { data } = await request('/login', {
+        method: 'POST',
+        body: JSON.stringify({ id, password }),
+      });
+      setUser({
+        ...user,
+        user: data.user,
+        accessToken: data.accessToken,
+      });
+    } catch (err) {
+      console.error(err);
+      throw new Error('Login 요청 중 에러 발생');
+    }
+  };
 
   const actions = { login };
   return (

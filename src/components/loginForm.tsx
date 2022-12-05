@@ -1,8 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Stack from '../components/common/Stack';
+import useUser from '../hooks/useUser';
 
 const LoginForm = () => {
+  const router = useRouter();
   const [values, setValues] = useState({
     loginId: '',
     password: '',
@@ -17,6 +20,7 @@ const LoginForm = () => {
   });
   const [canSubmitLogin, setCanSubmitLogin] = useState(false);
 
+  const { userAction } = useUser();
   const validate = useCallback(() => {
     const errors = {
       loginId: '',
@@ -56,9 +60,15 @@ const LoginForm = () => {
       [e.target.id]: true,
     });
   };
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert(JSON.stringify(values, null, 2));
+    try {
+      const { loginId, password } = values;
+      await userAction.login(loginId, password);
+      router.push('/');
+    } catch (err) {
+      console.error(err);
+    }
   };
   return (
     <Form onSubmit={handleSubmit}>
