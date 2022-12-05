@@ -8,10 +8,12 @@ type UserState = {
 };
 type UserAction = {
   login: (id: string, password: string) => void;
+  logout: () => void;
 };
 export const UserStateContext = createContext<UserState | null>(null);
 export const UserActionsContext = createContext<UserAction>({
   login: () => {},
+  logout: () => {},
 });
 
 const UserProvider = ({ children }: { children: ReactNode }) => {
@@ -37,7 +39,13 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const actions = { login };
+  const logout = () => {
+    setUser({
+      user: null,
+      accessToken: '',
+    });
+  };
+  const actions = useMemo(() => ({ login, logout }), []);
   return (
     <UserStateContext.Provider value={user}>
       <UserActionsContext.Provider value={actions}>{children}</UserActionsContext.Provider>
