@@ -1,6 +1,6 @@
 const API_END_POINT = 'http://localhost:3000';
 
-export const request = async (url: string, options: RequestInit) => {
+export const request = async (url: string, options?: RequestInit) => {
   try {
     const response = await fetch(`${API_END_POINT}${url}`, {
       ...options,
