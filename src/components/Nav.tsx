@@ -6,14 +6,16 @@ import Stack from './common/Stack';
 
 const Nav = () => {
   const { userInfo, userAction } = useUser();
+  const isLogin = userInfo?.accessToken;
+
   return (
     <Header>
       <Link href='/'>
         <Title>HAUS</Title>
       </Link>
-      {userInfo?.user ? (
+      {isLogin ? (
         <Stack direction='column'>
-          <div>{userInfo.user.NAME}</div>
+          <div>{userInfo.user!.NAME}</div>
           <StyledButton onClick={() => userAction.logout()}>logout</StyledButton>
         </Stack>
       ) : (

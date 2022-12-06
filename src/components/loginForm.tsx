@@ -1,11 +1,14 @@
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Stack from '../components/common/Stack';
+
 import useUser from '../hooks/useUser';
+import Stack from '../components/common/Stack';
 
 const LoginForm = () => {
   const router = useRouter();
+  const { userAction } = useUser();
+
   const [values, setValues] = useState({
     loginId: '',
     password: '',
@@ -20,7 +23,6 @@ const LoginForm = () => {
   });
   const [canSubmitLogin, setCanSubmitLogin] = useState(false);
 
-  const { userAction } = useUser();
   const validate = useCallback(() => {
     const errors = {
       loginId: '',
