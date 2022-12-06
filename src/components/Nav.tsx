@@ -13,11 +13,8 @@ const Nav = () => {
       </Link>
       {userInfo?.user ? (
         <Stack direction='column'>
-          <p>{userInfo.user.NAME}</p>
+          <div>{userInfo.user.NAME}</div>
           <StyledButton onClick={() => userAction.logout()}>logout</StyledButton>
-          <Link href='/login'>
-            <StyledLink>login</StyledLink>
-          </Link>
         </Stack>
       ) : (
         <Link href='/login'>

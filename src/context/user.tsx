@@ -1,6 +1,7 @@
-import React, { createContext, useState, ReactNode, useMemo } from 'react';
+import React, { createContext, useState, ReactNode, useMemo, useEffect } from 'react';
 import { request } from '../api/request';
 import { User } from '../types/user';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 type UserState = {
   user: User | null;
@@ -17,10 +18,20 @@ export const UserActionsContext = createContext<UserAction>({
 });
 
 const UserProvider = ({ children }: { children: ReactNode }) => {
+  const { getItem, setItem, removeItem } = useLocalStorage();
   const [user, setUser] = useState({
     user: null,
     accessToken: '',
   });
+
+  useEffect(() => {
+    setUser(
+      getItem('user', {
+        user: null,
+        accessToken: '',
+      })
+    );
+  }, []);
 
   const login = async (id: string, password: string) => {
     try {
@@ -33,6 +44,7 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
         user: data.user,
         accessToken: data.accessToken,
       });
+      setItem('user', data);
     } catch (err) {
       console.error(err);
       throw new Error('Login 요청 중 에러 발생');
@@ -44,6 +56,7 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
       user: null,
       accessToken: '',
     });
+    removeItem('user');
   };
   const actions = useMemo(() => ({ login, logout }), []);
   return (
