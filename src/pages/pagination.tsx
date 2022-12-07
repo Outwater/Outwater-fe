@@ -19,9 +19,13 @@ const PaginationPage: NextPage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       if (!page) return;
-      const { data } = await request(`/products?page=${page}&size=10`);
-      setProducts(data.products);
-      setTotalCount(data.totalCount);
+      try {
+        const { data } = await request(`/products?page=${page}&size=10`);
+        setProducts(data.products);
+        setTotalCount(data.totalCount);
+      } catch (err: any) {
+        err.name === 'NotFound' && router.push('/404');
+      }
     };
     fetchProducts();
   }, [page]);
