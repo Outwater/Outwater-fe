@@ -1,6 +1,12 @@
 const API_END_POINT = 'http://localhost:3000';
 
+const cache: { [url: string]: any } = {};
+
 export const request = async (url: string, options?: RequestInit) => {
+  if (cache[url]) {
+    return cache[url];
+  }
+
   try {
     const response = await fetch(`${API_END_POINT}${url}`, {
       ...options,
@@ -10,7 +16,9 @@ export const request = async (url: string, options?: RequestInit) => {
     });
 
     if (response.ok) {
-      return await response.json();
+      const json = await response.json();
+      cache[url] = json;
+      return json;
     }
     if (response.status === 404) {
       let err = new Error('존재하지 않는 데이터입니다.');
