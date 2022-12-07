@@ -1,22 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import type { NextPage } from 'next';
 import styled from 'styled-components';
 
-import products from '../api/data/products.json';
+import { Product } from '../types/product';
+import { request } from '../api/request';
+import Layout from '../components/Layout';
 import ProductList from '../components/ProductList';
 import Pagination from '../components/Pagination';
-import Layout from '../components/Layout';
 
 const PaginationPage: NextPage = () => {
   const router = useRouter();
-  const { page } = router.query;
+  const page = router.query.page as string;
 
+  const [products, setProducts] = useState<Product[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (!page) return;
+      const { data } = await request(`/products?page=${page}&size=10`);
+      setProducts(data.products);
+      setTotalCount(data.totalCount);
+    };
+    fetchProducts();
+  }, [page]);
+
+  if (products.length === 0) return <div>Loading..</div>;
   return (
     <Layout>
       <Container>
-        <ProductList products={products.slice(0, 10)} />
-        <Pagination />
+        <ProductList products={products} />
+        <Pagination totalCount={totalCount} />
       </Container>
     </Layout>
   );
