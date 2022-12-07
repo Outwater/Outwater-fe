@@ -19,7 +19,7 @@ const usePagenation = ({
   const lastPage = Math.ceil(totalCount / itemCountPerPage);
   const currentStartPage = Math.floor((currentPage - 1) / pageRange) * pageRange + 1;
   const currentLastPage = Math.min(Math.floor(currentStartPage + pageRange - 1), lastPage);
-  const isStartRange = currentPage < pageRange;
+  const isStartRange = currentPage <= pageRange;
   const isLastRange = currentPage > lastPage - (lastPage % pageRange);
 
   useEffect(() => {
