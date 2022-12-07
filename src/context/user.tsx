@@ -1,7 +1,7 @@
 import React, { createContext, useState, ReactNode, useMemo, useEffect } from 'react';
 import { request } from '../api/request';
 import { User } from '../types/user';
-import useLocalStorage from '../hooks/useLocalStorage';
+import useStorage from '../hooks/useStorage';
 
 type UserState = {
   user: User | null;
@@ -18,7 +18,7 @@ export const UserActionsContext = createContext<UserAction>({
 });
 
 const UserProvider = ({ children }: { children: ReactNode }) => {
-  const { getItem, setItem, removeItem } = useLocalStorage();
+  const { getItem, setItem, removeItem } = useStorage('local');
   const [user, setUser] = useState({
     user: null,
     accessToken: '',
