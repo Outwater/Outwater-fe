@@ -1,21 +1,47 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { VscChevronLeft, VscChevronRight } from 'react-icons/vsc';
 
-const Pagination = () => {
+import usePagenation from '../hooks/usePagenation';
+
+const Pagination = ({ totalCount }: { totalCount: number }) => {
+  const router = useRouter();
+  const page = router.query.page as string;
+  const {
+    currentPage,
+    pageNumbers,
+    isStartRange,
+    isLastRange,
+    movePrevRange,
+    moveNextRange,
+    movePage,
+  } = usePagenation({
+    initialPage: Number(page),
+    totalCount,
+    pageRange: 5,
+    itemCountPerPage: 10,
+  });
+
   return (
     <Container>
-      <Button disabled>
+      <Button disabled={isStartRange} onClick={movePrevRange}>
         <VscChevronLeft />
       </Button>
       <PageWrapper>
-        {[1, 2, 3, 4, 5].map((page) => (
-          <Page key={page} selected={page === 1} disabled={page === 1}>
-            {page}
+        {pageNumbers.map((page) => (
+          <Page
+            key={String(page)}
+            data-page={page}
+            selected={page === currentPage}
+            disabled={page === currentPage}
+            onClick={movePage}
+          >
+            {String(page)}
           </Page>
         ))}
       </PageWrapper>
-      <Button disabled={false}>
+      <Button disabled={isLastRange} onClick={moveNextRange}>
         <VscChevronRight />
       </Button>
     </Container>
@@ -35,6 +61,8 @@ const Container = styled.div`
 `;
 
 const Button = styled.button`
+  cursor: pointer;
+
   &:disabled {
     color: #e2e2ea;
     cursor: default;
@@ -55,6 +83,8 @@ const Page = styled.button<PageType>`
   background-color: ${({ selected }) => (selected ? '#000' : 'transparent')};
   color: ${({ selected }) => (selected ? '#fff' : '#000')};
   font-size: 20px;
+
+  cursor: pointer;
 
   & + & {
     margin-left: 4px;

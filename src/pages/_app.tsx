@@ -2,19 +2,20 @@ import type { AppProps } from 'next/app';
 import styled from 'styled-components';
 
 import setupMSW from '../api/setup';
+import UserProvider from '../context/user';
 import GlobalStyle from '../styles/GlobalStyle';
 
 setupMSW();
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <>
+    <UserProvider>
       <GlobalStyle />
       <Background />
       <Content>
         <Component {...pageProps} />
       </Content>
-    </>
+    </UserProvider>
   );
 }
 

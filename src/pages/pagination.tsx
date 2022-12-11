@@ -1,49 +1,49 @@
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import type { NextPage } from 'next';
-import React from 'react';
 import styled from 'styled-components';
 
-import products from '../api/data/products.json';
+import { Product } from '../types/product';
+import { request } from '../api/request';
+import Layout from '../components/Layout';
 import ProductList from '../components/ProductList';
 import Pagination from '../components/Pagination';
 
 const PaginationPage: NextPage = () => {
   const router = useRouter();
-  const { page } = router.query;
+  const page = router.query.page as string;
 
+  const [products, setProducts] = useState<Product[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (!page) return;
+      try {
+        const { data } = await request(`/products?page=${page}&size=10`);
+        setProducts(data.products);
+        setTotalCount(data.totalCount);
+      } catch (err: any) {
+        err.name === 'NotFound' && router.push('/404');
+      }
+    };
+    fetchProducts();
+  }, [page]);
+
+  if (products.length === 0) return <div>Loading..</div>;
   return (
-    <>
-      <Header>
-        <Link href='/'>
-          <Title>HAUS</Title>
-        </Link>
-        <Link href='/login'>
-          <p>login</p>
-        </Link>
-      </Header>
+    <Layout>
       <Container>
-        <ProductList products={products.slice(0, 10)} />
-        <Pagination />
+        <ProductList products={products} />
+        <Pagination totalCount={totalCount} />
       </Container>
-    </>
+    </Layout>
   );
 };
 
 export default PaginationPage;
 
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-`;
-
-const Title = styled.a`
-  font-size: 48px;
-`;
-
-const Container = styled.div`
+const Container = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
